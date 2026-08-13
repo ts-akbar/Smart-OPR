@@ -186,18 +186,34 @@
             letter-spacing: 1px;
         }
 
-        /* Tetapan Cetakan (A4) */
+        /* Tetapan Cetakan (A4 Strict - Muat Dalam 1 Muka Surat Sahaja) */
         @media print {
             @page { size: A4 portrait; margin: 0; } 
             
-            body { background: white; padding: 0; margin: 0;}
-            .app-container { box-shadow: none; max-width: 100%; border-radius: 0; }
-            .form-section, .action-buttons { display: none !important; }
+            /* Paksa dokumen kekal 1 muka surat A4 */
+            html, body { width: 210mm; height: 297mm; overflow: hidden; margin: 0; padding: 0; background: white; }
+            .app-container { box-shadow: none; max-width: 100%; height: 100%; border-radius: 0; overflow: hidden; }
             
+            .form-section, .action-buttons { display: none !important; }
             .powered-by { display: none !important; } 
             
-            .report-section { display: block !important; padding-bottom: 0; min-height: auto; }
-            .report-content { padding: 15mm; } 
+            .report-section { display: block !important; padding-bottom: 0; height: 100%; overflow: hidden; }
+            .report-content { padding: 12mm; height: 100%; box-sizing: border-box; } 
+
+            /* Mampatkan sedikit ruang margin kotak dalam mod cetakan supaya teks panjang tak tolak ke bawah */
+            .r-content-box { margin-bottom: 7px; }
+            .r-content-box p { min-height: auto; padding: 5px 8px; }
+            .r-images { margin-bottom: 10px; gap: 5px; }
+
+            /* Hadkan tinggi maksimum gambar ketika cetakan supaya ruangan footer/tandatangan tak hilang */
+            .count-1 .img-box { height: 350px; } 
+            .count-2 .img-box { height: 280px; } 
+            .count-3 .img-box:first-child { height: 180px; } 
+            .count-3 .img-box { height: 150px; }
+            .count-4 .img-box { height: 180px; } 
+
+            .r-footer-sign { margin-top: 10px; }
+            .r-signature .prep-by { margin-bottom: 30px; }
         }
     </style>
 </head>
@@ -440,4 +456,5 @@
 
 </body>
 </html>
+
 
