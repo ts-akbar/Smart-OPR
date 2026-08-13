@@ -50,6 +50,11 @@
         @media(min-width: 600px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
         
         .form-group { margin-bottom: 15px; }
+        
+        /* Flex header untuk Butang AI */
+        .label-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .label-header label { margin-bottom: 0; }
+        
         label { display: block; font-weight: 600; margin-bottom: 5px; color: #333; font-size: 14px; }
         input, textarea, select {
             width: 100%; padding: 12px; border: 2px solid #ddd;
@@ -59,6 +64,15 @@
             border-color: #ff0844; outline: none; box-shadow: 0 0 8px rgba(255,8,68,0.3);
         }
         textarea { resize: vertical; min-height: 80px; }
+
+        /* BUTANG JANA AI */
+        .btn-ai {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            border: none; border-radius: 5px; padding: 4px 10px; font-size: 11px;
+            font-weight: 700; color: #333; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            transition: transform 0.1s;
+        }
+        .btn-ai:active { transform: scale(0.95); }
 
         /* BUTANG 3D BERWARNA-WARNI */
         .btn-3d {
@@ -119,13 +133,19 @@
         .r-school { font-size: 22px; font-weight: 700; text-transform: uppercase; margin-bottom: 2px;}
         .r-title { font-size: 16px; font-weight: 600; }
         
-        .r-info-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 11px; } 
-        .r-info-table th, .r-info-table td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; }
+        .r-info-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 11px; table-layout: fixed; } 
+        .r-info-table th, .r-info-table td { 
+            border: 1px solid #ccc; padding: 5px 8px; text-align: left; 
+            word-wrap: break-word; overflow-wrap: break-word; /* Elak teks jadual terkeluar */
+        }
         .r-info-table th { font-weight: 600; width: 20%; }
         
         .r-content-box { margin-bottom: 10px; text-align: justify; }
         .r-content-box h3 { font-size: 12px; margin: 0; text-transform: uppercase; } 
-        .r-content-box p { font-size: 11px; margin: 0; padding: 8px; min-height: 40px; line-height: 1.4; } 
+        .r-content-box p { 
+            font-size: 11px; margin: 0; padding: 8px; min-height: 40px; line-height: 1.4; 
+            word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap; /* Elak teks terkeluar dari border */
+        } 
 
         /* Susunan Gambar Dinamik (Gambar Dibesarkan) */
         .r-images { display: grid; gap: 8px; margin-bottom: 15px; }
@@ -150,7 +170,8 @@
 
         .r-footer-sign { margin-top: 15px; display: flex; justify-content: flex-end; }
         .r-signature { text-align: center; width: 220px; }
-        .r-signature .line { border-top: 1.5px solid #333; margin-top: 40px; padding-top: 3px; font-size: 12px; font-weight: bold; }
+        .r-signature .prep-by { font-size: 12px; font-weight: 600; margin-bottom: 40px; text-align: center; }
+        .r-signature .line { border-top: 1.5px solid #333; padding-top: 3px; font-size: 12px; font-weight: bold; }
 
         /* Teks Hak Cipta */
         .powered-by {
@@ -167,18 +188,16 @@
 
         /* Tetapan Cetakan (A4) */
         @media print {
-            /* Margin 0 ini penting untuk buang URL, tarikh, page number bawaan komputer/browser */
             @page { size: A4 portrait; margin: 0; } 
             
             body { background: white; padding: 0; margin: 0;}
             .app-container { box-shadow: none; max-width: 100%; border-radius: 0; }
             .form-section, .action-buttons { display: none !important; }
             
-            /* Sembunyikan hak cipta ketika cetakan/PDF */
             .powered-by { display: none !important; } 
             
             .report-section { display: block !important; padding-bottom: 0; min-height: auto; }
-            .report-content { padding: 15mm; } /* Padding ganti margin supaya kandungan tidak kena hujung kertas */
+            .report-content { padding: 15mm; } 
         }
     </style>
 </head>
@@ -220,17 +239,26 @@
             </div>
 
             <div class="form-group">
-                <label>Deskripsi Tajuk / Pengenalan</label>
+                <div class="label-header">
+                    <label>Deskripsi Tajuk / Pengenalan</label>
+                    <button type="button" class="btn-ai" onclick="janaAI('in_deskripsi')">✨ Jana AI</button>
+                </div>
                 <textarea id="in_deskripsi" required></textarea>
             </div>
 
             <div class="form-group">
-                <label>Fokus / Isu Keberkesanan</label>
+                <div class="label-header">
+                    <label>Fokus / Isu Keberkesanan</label>
+                    <button type="button" class="btn-ai" onclick="janaAI('in_fokus')">✨ Jana AI</button>
+                </div>
                 <textarea id="in_fokus" required></textarea>
             </div>
 
             <div class="form-group">
-                <label>Ulasan Guru / Impak</label>
+                <div class="label-header">
+                    <label>Ulasan Guru / Impak</label>
+                    <button type="button" class="btn-ai" onclick="janaAI('in_ulasan')">✨ Jana AI</button>
+                </div>
                 <textarea id="in_ulasan" required></textarea>
             </div>
 
@@ -298,6 +326,7 @@
 
             <div class="r-footer-sign">
                 <div class="r-signature">
+                    <div class="prep-by">Disediakan oleh,</div>
                     <div class="line" id="out_jawatan">Nama / Jawatan</div>
                 </div>
             </div>
@@ -310,21 +339,47 @@
 </div>
 
 <script>
+    // Fungsi Menjana Teks AI Automatik
+    function janaAI(fieldId) {
+        const tajuk = document.getElementById('in_tajuk').value.trim();
+        
+        if (tajuk === "") {
+            alert("Sila masukkan 'Tajuk Program' terlebih dahulu untuk menjana teks AI.");
+            document.getElementById('in_tajuk').focus();
+            return;
+        }
+
+        let cadanganTeks = "";
+
+        if (fieldId === 'in_deskripsi') {
+            cadanganTeks = `Program ${tajuk} ini dirangka khas untuk memberi pendedahan dan kefahaman yang lebih komprehensif kepada para peserta. Melalui pelaksanaan program ini, diharapkan peserta dapat mengaplikasikan pengetahuan baharu dalam pengajaran, pembelajaran, mahupun tugasan harian dengan lebih berkesan dan terancang.`;
+        } 
+        else if (fieldId === 'in_fokus') {
+            cadanganTeks = `Fokus utama pelaksanaan ${tajuk} adalah untuk menangani isu kurangnya penglibatan serta pemahaman mendalam dalam kalangan kumpulan sasaran. Pendekatan secara interaktif dan praktikal digunakan secara langsung bagi membantu meningkatkan kemahiran dan menyelesaikan kelemahan yang telah dikenal pasti sebelum ini.`;
+        } 
+        else if (fieldId === 'in_ulasan') {
+            cadanganTeks = `Secara keseluruhannya, program ${tajuk} telah berjaya mencapai objektif yang disasarkan dengan cemerlang. Peserta menunjukkan komitmen yang amat memberangsangkan dan maklum balas yang diterima adalah sangat positif. Impak program ini jelas terlihat pada peningkatan kemahiran, kerjasama kumpulan, serta keyakinan peserta untuk mengadaptasi ilmu yang dipelajari.`;
+        }
+
+        document.getElementById(fieldId).value = cadanganTeks;
+    }
+
+    // Fungsi Submit dan Pindah Data
     document.getElementById('reportForm').addEventListener('submit', function(e) {
         e.preventDefault(); 
         
-        // 1. Set Tema
+        // Set Tema
         const tema = document.getElementById('in_tema').value;
         const reportContentArea = document.getElementById('reportContentArea');
         reportContentArea.className = 'report-content ' + tema;
 
-        // 2. Pindah Data Teks biasa (kecuali tarikh)
+        // Pindah Data Teks
         const fields = ['sekolah', 'tajuk', 'masa', 'tempat', 'anjuran', 'sasaran', 'alat', 'deskripsi', 'fokus', 'ulasan', 'jawatan'];
         fields.forEach(f => {
             document.getElementById('out_' + f).innerText = document.getElementById('in_' + f).value;
         });
 
-        // Format Tarikh (Hari, Bulan, Tahun)
+        // Format Tarikh
         const dateInput = document.getElementById('in_tarikh').value;
         if(dateInput) {
             const dateObj = new Date(dateInput);
@@ -332,7 +387,7 @@
             document.getElementById('out_tarikh').innerText = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
         }
 
-        // 3. Pindah dan Susun Gambar Dinamik
+        // Pindah dan Susun Gambar
         const imgContainer = document.getElementById('dynamicImageContainer');
         imgContainer.innerHTML = ''; 
         
@@ -374,6 +429,7 @@
         });
     });
 
+    // Fungsi Edit Semula
     function editLaporan() {
         document.getElementById('formSection').style.display = 'block';
         document.getElementById('reportSection').style.display = 'none';
