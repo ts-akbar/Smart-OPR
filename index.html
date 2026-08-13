@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penjana One Page Report - Ts. AKBAR</title>
+    <style>
+        /* Tetapan Asas & Font */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        body {
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Container Utama */
+        .app-container {
+            width: 100%;
+            max-width: 794px; /* Lebar A4 */
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* BAHAGIAN BORANG */
+        .form-section { padding: 30px; }
+        .form-section h1 {
+            text-align: center;
+            background: linear-gradient(to right, #ff0844 0%, #ffb199 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media(min-width: 600px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; color: #333; font-size: 14px; }
+        input, textarea, select {
+            width: 100%; padding: 12px; border: 2px solid #ddd;
+            border-radius: 8px; font-size: 14px; transition: 0.3s;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: #ff0844; outline: none; box-shadow: 0 0 8px rgba(255,8,68,0.3);
+        }
+        textarea { resize: vertical; min-height: 80px; }
+
+        /* BUTANG 3D BERWARNA-WARNI */
+        .btn-3d {
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            border-bottom: 6px solid #0288d1;
+            border-radius: 10px;
+            color: white;
+            padding: 15px;
+            width: 100%;
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.1s ease-in-out;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            margin-top: 20px;
+        }
+        .btn-3d:active {
+            transform: translateY(4px);
+            border-bottom: 2px solid #0288d1;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+        }
+        
+        .action-buttons { display: flex; gap: 10px; margin-bottom: 10px; padding: 20px 20px 0 20px; }
+        .btn-edit { background: linear-gradient(to right, #f83600 0%, #f9d423 100%); border-bottom: 5px solid #d35400; }
+        .btn-print { background: linear-gradient(to right, #11998e 0%, #38ef7d 100%); border-bottom: 5px solid #0f7a70; }
+
+        /* BAHAGIAN LAPORAN (A4) */
+        .report-section {
+            display: none;
+            background: white;
+            min-height: 1123px; /* Anggaran Tinggi A4 */
+            position: relative;
+            padding-bottom: 40px;
+        }
+        .report-content { padding: 25px; } /* Ruang dikecilkan agar muat satu page */
+
+        /* Tema 1: Warna-Warni Kreatif */
+        .theme-kreatif .r-header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px;}
+        .theme-kreatif .r-content-box h3 { background: #ff0844; color: white; padding: 5px 12px; border-radius: 5px 5px 0 0; }
+        .theme-kreatif .r-content-box p { border: 2px solid #ff0844; border-top: none; border-radius: 0 0 5px 5px; }
+        .theme-kreatif .r-info-table th { background: #ffb199; }
+
+        /* Tema 2: Profesional Biru */
+        .theme-biru .r-header { background: #003366; color: white; padding: 15px; text-align: center; border-bottom: 5px solid #00aaff; margin-bottom: 15px; }
+        .theme-biru .r-content-box h3 { background: #003366; color: white; padding: 5px 12px; }
+        .theme-biru .r-content-box p { border: 1px solid #003366; }
+        .theme-biru .r-info-table th { background: #e6f2ff; }
+
+        /* Tema 3: Elegan Gelap */
+        .theme-elegan .r-header { background: #2c3e50; color: #f1c40f; padding: 15px; text-align: right; border-left: 10px solid #f1c40f; margin-bottom: 15px; }
+        .theme-elegan .r-content-box h3 { background: #2c3e50; color: #f1c40f; padding: 5px 12px; }
+        .theme-elegan .r-content-box p { border: 1px solid #bdc3c7; background: #fdfdfd;}
+        .theme-elegan .r-info-table th { background: #ecf0f1; }
+
+        /* Elemen Laporan Umum (Teks Dikecilkan) */
+        .r-school { font-size: 22px; font-weight: 700; text-transform: uppercase; margin-bottom: 2px;}
+        .r-title { font-size: 16px; font-weight: 600; }
+        
+        .r-info-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 11px; } 
+        .r-info-table th, .r-info-table td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; }
+        .r-info-table th { font-weight: 600; width: 20%; }
+        
+        .r-content-box { margin-bottom: 10px; text-align: justify; }
+        .r-content-box h3 { font-size: 12px; margin: 0; text-transform: uppercase; } 
+        .r-content-box p { font-size: 11px; margin: 0; padding: 8px; min-height: 40px; line-height: 1.4; } 
+
+        /* Susunan Gambar Dinamik (Gambar Dibesarkan) */
+        .r-images { display: grid; gap: 8px; margin-bottom: 15px; }
+        
+        .count-1 { grid-template-columns: 1fr; }
+        .count-1 .img-box { height: 420px; } 
+        
+        .count-2 { grid-template-columns: 1fr 1fr; }
+        .count-2 .img-box { height: 350px; } 
+        
+        .count-3 { grid-template-columns: 1fr 1fr; }
+        .count-3 .img-box:first-child { grid-column: span 2; height: 250px; } 
+        .count-3 .img-box { height: 200px; }
+        
+        .count-4 { grid-template-columns: 1fr 1fr; }
+        .count-4 .img-box { height: 210px; } 
+
+        .img-box {
+            border: 2px solid #ddd; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f4f4f4;
+        }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .r-footer-sign { margin-top: 15px; display: flex; justify-content: flex-end; }
+        .r-signature { text-align: center; width: 220px; }
+        .r-signature .line { border-top: 1.5px solid #333; margin-top: 40px; padding-top: 3px; font-size: 12px; font-weight: bold; }
+
+        /* Teks Hak Cipta */
+        .powered-by {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #7f8c8d;
+            letter-spacing: 1px;
+        }
+
+        /* Tetapan Cetakan (A4) */
+        @media print {
+            /* Margin 0 ini penting untuk buang URL, tarikh, page number bawaan komputer/browser */
+            @page { size: A4 portrait; margin: 0; } 
+            
+            body { background: white; padding: 0; margin: 0;}
+            .app-container { box-shadow: none; max-width: 100%; border-radius: 0; }
+            .form-section, .action-buttons { display: none !important; }
+            
+            /* Sembunyikan hak cipta ketika cetakan/PDF */
+            .powered-by { display: none !important; } 
+            
+            .report-section { display: block !important; padding-bottom: 0; min-height: auto; }
+            .report-content { padding: 15mm; } /* Padding ganti margin supaya kandungan tidak kena hujung kertas */
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- BAHAGIAN BORANG -->
+    <div class="form-section" id="formSection">
+        <h1>Borang OPR Kreatif</h1>
+        <form id="reportForm">
+            
+            <div class="form-group">
+                <label>Pilih Tema / Susunan Laporan</label>
+                <select id="in_tema">
+                    <option value="theme-kreatif">Moden Warna-Warni (Kreatif)</option>
+                    <option value="theme-biru">Profesional Korporat (Biru)</option>
+                    <option value="theme-elegan">Minimalis Elegan (Gelap)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Nama Sekolah / Institusi</label>
+                <input type="text" id="in_sekolah" placeholder="Cth: SMK Seri Bintang Utara" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Tajuk Program / Aktiviti</label>
+                <input type="text" id="in_tajuk" placeholder="Cth: Bengkel Pemantapan ICT" required>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group"><label>Tarikh</label><input type="date" id="in_tarikh" required></div>
+                <div class="form-group"><label>Masa</label><input type="time" id="in_masa" required></div>
+                <div class="form-group"><label>Tempat</label><input type="text" id="in_tempat" required></div>
+                <div class="form-group"><label>Anjuran</label><input type="text" id="in_anjuran" required></div>
+                <div class="form-group"><label>Sasaran</label><input type="text" id="in_sasaran" required></div>
+                <div class="form-group"><label>Alat Kolaboratif</label><input type="text" id="in_alat" placeholder="Cth: Google Meet, Padlet, Canva"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Deskripsi Tajuk / Pengenalan</label>
+                <textarea id="in_deskripsi" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Fokus / Isu Keberkesanan</label>
+                <textarea id="in_fokus" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Ulasan Guru / Impak</label>
+                <textarea id="in_ulasan" required></textarea>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group"><label>Gambar 1 (Wajib)</label><input type="file" id="in_gambar1" accept="image/*" required></div>
+                <div class="form-group"><label>Gambar 2 (Pilihan)</label><input type="file" id="in_gambar2" accept="image/*"></div>
+                <div class="form-group"><label>Gambar 3 (Pilihan)</label><input type="file" id="in_gambar3" accept="image/*"></div>
+                <div class="form-group"><label>Gambar 4 (Pilihan)</label><input type="file" id="in_gambar4" accept="image/*"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Nama & Jawatan (Tandatangan)</label>
+                <input type="text" id="in_jawatan" placeholder="Cth: Ahmad Bin Abu (Penyelaras ICT)" required>
+            </div>
+
+            <button type="submit" class="btn-3d">🚀 JANA LAPORAN SEKARANG</button>
+        </form>
+    </div>
+
+    <!-- BAHAGIAN LAPORAN (Hasil Akhir) -->
+    <div class="report-section" id="reportSection">
+        <div class="action-buttons no-print">
+            <button class="btn-3d btn-edit" onclick="editLaporan()">✏️ Edit Semula</button>
+            <button class="btn-3d btn-print" onclick="window.print()">🖨️ Cetak / PDF</button>
+        </div>
+
+        <div class="report-content" id="reportContentArea">
+            <div class="r-header">
+                <div class="r-school" id="out_sekolah">NAMA SEKOLAH</div>
+                <div class="r-title" id="out_tajuk">TAJUK PROGRAM</div>
+            </div>
+
+            <table class="r-info-table">
+                <tr>
+                    <th>Tarikh</th><td id="out_tarikh"></td>
+                    <th>Masa</th><td id="out_masa"></td>
+                </tr>
+                <tr>
+                    <th>Tempat</th><td id="out_tempat"></td>
+                    <th>Sasaran</th><td id="out_sasaran"></td>
+                </tr>
+                <tr>
+                    <th>Anjuran</th><td id="out_anjuran"></td>
+                    <th>Alat Kolab.</th><td id="out_alat"></td>
+                </tr>
+            </table>
+
+            <div class="r-content-box">
+                <h3>Deskripsi Tajuk</h3>
+                <p id="out_deskripsi"></p>
+            </div>
+
+            <div class="r-content-box">
+                <h3>Fokus / Isu Keberkesanan</h3>
+                <p id="out_fokus"></p>
+            </div>
+
+            <div class="r-content-box">
+                <h3>Ulasan Guru / Impak</h3>
+                <p id="out_ulasan"></p>
+            </div>
+
+            <!-- Kontena Gambar Dinamik -->
+            <div id="dynamicImageContainer"></div>
+
+            <div class="r-footer-sign">
+                <div class="r-signature">
+                    <div class="line" id="out_jawatan">Nama / Jawatan</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teks Hak Cipta -->
+        <div class="powered-by">Powered By Ts. AKBAR @ Hak Cipta Terpelihara 2026</div>
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('reportForm').addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        
+        // 1. Set Tema
+        const tema = document.getElementById('in_tema').value;
+        const reportContentArea = document.getElementById('reportContentArea');
+        reportContentArea.className = 'report-content ' + tema;
+
+        // 2. Pindah Data Teks biasa (kecuali tarikh)
+        const fields = ['sekolah', 'tajuk', 'masa', 'tempat', 'anjuran', 'sasaran', 'alat', 'deskripsi', 'fokus', 'ulasan', 'jawatan'];
+        fields.forEach(f => {
+            document.getElementById('out_' + f).innerText = document.getElementById('in_' + f).value;
+        });
+
+        // Format Tarikh (Hari, Bulan, Tahun)
+        const dateInput = document.getElementById('in_tarikh').value;
+        if(dateInput) {
+            const dateObj = new Date(dateInput);
+            const months = ['Januari', 'Februari', 'Mac', 'April', 'Mei', 'Jun', 'Julai', 'Ogos', 'September', 'Oktober', 'November', 'Disember'];
+            document.getElementById('out_tarikh').innerText = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+        }
+
+        // 3. Pindah dan Susun Gambar Dinamik
+        const imgContainer = document.getElementById('dynamicImageContainer');
+        imgContainer.innerHTML = ''; 
+        
+        let imgCount = 0;
+        let filePromises = [];
+
+        for(let i=1; i<=4; i++) {
+            let input = document.getElementById('in_gambar' + i);
+            if(input.files && input.files[0]) {
+                imgCount++;
+                let reader = new FileReader();
+                let promise = new Promise((resolve) => {
+                    reader.onload = function(e) {
+                        resolve(e.target.result);
+                    };
+                });
+                reader.readAsDataURL(input.files[0]);
+                filePromises.push(promise);
+            }
+        }
+
+        Promise.all(filePromises).then((imagesData) => {
+            imgContainer.className = 'r-images count-' + imgCount;
+            imagesData.forEach(data => {
+                let div = document.createElement('div');
+                div.className = 'img-box';
+                let img = document.createElement('img');
+                img.src = data;
+                div.appendChild(img);
+                imgContainer.appendChild(div);
+            });
+
+            // Tukar Paparan
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('reportSection').style.display = 'block';
+            window.scrollTo(0,0);
+            
+            document.body.style.background = '#e0e5ec';
+        });
+    });
+
+    function editLaporan() {
+        document.getElementById('formSection').style.display = 'block';
+        document.getElementById('reportSection').style.display = 'none';
+        document.body.style.background = 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)';
+        window.scrollTo(0,0);
+    }
+</script>
+
+</body>
+</html>
